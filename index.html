@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rifa Navideña - ¡Aparta tu número!</title>
     <style>
-        /* Estilos Base */
         body { 
             font-family: Arial, sans-serif; 
             background-color: #ff0000; 
@@ -17,8 +16,6 @@
         }
         .header h1 { font-size: 2.5em; margin-bottom: 5px; }
         .details p { font-size: 1.2em; margin: 5px 0; }
-        
-        /* Contenedor y Cuadrícula de Números */
         .grid-container { display: flex; justify-content: center; margin: 10px 0; }
         .number-grid { 
             border-collapse: collapse; 
@@ -40,8 +37,6 @@
         }
         .number-grid td:hover { background-color: #000000; }
         .number-grid td.selected { background-color: #f7d242; color: black; }
-        
-        /* Formulario y Botones */
         .form-container { 
             padding: 20px 10px; 
             background-color: rgba(0, 0, 0, 0.7);
@@ -138,7 +133,7 @@
 
     <script>
         // --- 🟢 URL DE LA APLICACIÓN WEB DE GOOGLE APPS SCRIPT (URL ACTIVA) 🟢 ---
-        // ESTA ES LA URL DE TU ÚLTIMO DESPLIEGUE. SI DESPLIEGAS UNA NUEVA VERSIÓN DEL CODE.GS, DEBES ACTUALIZAR ESTA LÍNEA.
+        // ⚠️ REEMPLAZA ESTA URL CON LA QUE OBTENGAS DEL PASO 3 DEL DESPLIEGUE NUEVO.
         const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzN1HCLSvaKRr9Kg_IclrJLa3Vhzg_F-gxHRFmMBQ1JVrmNoXKUCiP3ABsqGr87m8D03Q/exec"; 
         // -----------------------------------------------------------------------------
         const MAX_NUMBERS = 5; 
@@ -223,9 +218,8 @@
                         failedNumbers.push(num);
                     }
                 } catch (error) {
-                    // Este error indica un problema con la URL o la red.
                     statusMessage.style.color = 'red';
-                    statusMessage.textContent = `Error de conexión. Por favor, intenta de nuevo o contacta al administrador.`; 
+                    statusMessage.textContent = `Error de conexión. Por favor, revisa la URL del Apps Script.`; 
                     submitButton.disabled = false;
                     return; 
                 }
