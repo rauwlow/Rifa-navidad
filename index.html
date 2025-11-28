@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rifa Navideña - ¡Aparta tu número!</title>
     <style>
-        /* Estilos Base y Adaptabilidad (Mobile-Friendly) */
+        /* Estilos (omitiendo por brevedad, son los mismos) */
         body { 
             font-family: Arial, sans-serif; 
-            background-color: #ff0000; /* Fondo rojo principal */
+            background-color: #ff0000; 
             color: white; 
             text-align: center; 
             padding: 10px; 
@@ -23,8 +23,6 @@
             font-size: 1.2em; 
             margin: 5px 0; 
         }
-        
-        /* Contenedor y Cuadrícula de Números */
         .grid-container { 
             display: flex; 
             justify-content: center; 
@@ -50,8 +48,6 @@
         }
         .number-grid td:hover { background-color: #000000; }
         .number-grid td.selected { background-color: #f7d242; color: black; }
-        
-        /* Formulario y Botones */
         .form-container { 
             padding: 20px 10px; 
             background-color: rgba(0, 0, 0, 0.7);
@@ -153,11 +149,11 @@
 
     <script>
         // --- 🟢 URL DE LA APLICACIÓN WEB DE GOOGLE APPS SCRIPT (URL ACTIVA) 🟢 ---
+        // ESTA URL DEBE COINCIDIR EXACTAMENTE CON LA DE TU ÚLTIMO DESPLIEGUE (Versión 4)
         const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzN1HCLSvaKRr9Kg_IclrJLa3Vhzg_F-gxHRFmMBQ1JVrmNoXKUCiP3ABsqGr87m8D03Q/exec"; 
         // -----------------------------------------------------------------------------
         const MAX_NUMBERS = 5; 
 
-        // CRÍTICO: Seleccionando todos los TD dentro de la tabla con id="numberGrid"
         const cells = document.querySelectorAll('#numberGrid td');
         const selectedNumberInput = document.getElementById('selectedNumber');
         const form = document.getElementById('raffleForm');
@@ -167,12 +163,12 @@
         
         let selectedNumbers = [];
 
-        // Función para codificar los datos como una cadena URL (más compatible con Apps Script)
+        // Función para codificar los datos como una cadena URL (Compatibilidad Apps Script)
         const encodeFormData = (name, number) => {
             return `Nombre=${encodeURIComponent(name)}&Número=${encodeURIComponent(number)}`;
         };
 
-        // 1. Lógica de selección de número MÚLTIPLE con límite
+        // 1. Lógica de selección de número
         cells.forEach(cell => {
             cell.listener = function() {
                 const number = this.getAttribute('data-number');
@@ -202,7 +198,7 @@
             cell.addEventListener('click', cell.listener);
         });
 
-        // 2. Lógica de envío del formulario al Apps Script (Backend) - ¡MODIFICADO CLAVE!
+        // 2. Lógica de envío del formulario al Apps Script (Backend)
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -217,42 +213,38 @@
             statusMessage.textContent = 'Enviando y verificando disponibilidad de los números...';
 
             const name = document.getElementById('participantName').value;
-            let allSuccess = true;
             const registeredNumbers = [];
             const failedNumbers = [];
             
-            // --- Bucle para enviar cada número individualmente ---
             for (const num of selectedNumbers) {
                 
                 try {
                     const response = await fetch(ENDPOINT_URL, {
                         method: 'POST',
-                        // CAMBIO CLAVE: Usando Content-Type URL-encoded para máxima compatibilidad
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: encodeFormData(name, num)
                     });
                     
-                    const result = await response.json();
+                    // Asegurar que la respuesta es JSON antes de parsearla
+                    const result = await response.json(); 
                     
                     if (result.success) {
                         registeredNumbers.push(num);
                     } else {
-                        allSuccess = false;
                         failedNumbers.push(num);
                     }
                 } catch (error) {
-                    allSuccess = false;
+                    // Si falla aquí, significa que la URL es incorrecta o hay un bloqueo de CORS/red.
                     statusMessage.style.color = 'red';
-                    // Este mensaje aparece si hay un error de CORS, un fallo de red, o un error fatal en el servidor (el TypeError)
                     statusMessage.textContent = `Error de conexión. Por favor, intenta de nuevo o contacta al administrador.`; 
                     submitButton.disabled = false;
                     return; 
                 }
             }
             
-            // --- Reporte Final después del Bucle ---
+            // --- Reporte Final ---
             if (registeredNumbers.length > 0) {
                 statusMessage.style.color = 'green';
                 const cost = registeredNumbers.length * 10;
@@ -280,7 +272,7 @@
             } else if (failedNumbers.length > 0) {
                 statusMessage.style.color = 'red';
                 statusMessage.textContent = 
-                    `Error: No se pudo apartar ningún número. Los números seleccionados (${failedNumbers.join(', ')}) probablemente ya están ocupados.`;
+                    `Error: No se pudo apartar ningún número. Los números seleccionados (${selectedNumbers.join(', ')}) probablemente ya están ocupados.`;
             }
             
             selectedNumbers = []; 
