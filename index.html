@@ -167,9 +167,13 @@
         
         let selectedNumbers = [];
 
+        // Función para codificar los datos como una cadena URL (más compatible con Apps Script)
+        const encodeFormData = (name, number) => {
+            return `Nombre=${encodeURIComponent(name)}&Número=${encodeURIComponent(number)}`;
+        };
+
         // 1. Lógica de selección de número MÚLTIPLE con límite
         cells.forEach(cell => {
-            // Asegurando que el listener se adjunta correctamente
             cell.listener = function() {
                 const number = this.getAttribute('data-number');
                 
@@ -198,7 +202,7 @@
             cell.addEventListener('click', cell.listener);
         });
 
-        // 2. Lógica de envío del formulario al Apps Script (Backend)
+        // 2. Lógica de envío del formulario al Apps Script (Backend) - ¡MODIFICADO CLAVE!
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -219,14 +223,15 @@
             
             // --- Bucle para enviar cada número individualmente ---
             for (const num of selectedNumbers) {
-                const formData = new FormData();
-                formData.append('Nombre', name);
-                formData.append('Número', num); 
                 
                 try {
                     const response = await fetch(ENDPOINT_URL, {
                         method: 'POST',
-                        body: formData
+                        // CAMBIO CLAVE: Usando Content-Type URL-encoded para máxima compatibilidad
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: encodeFormData(name, num)
                     });
                     
                     const result = await response.json();
