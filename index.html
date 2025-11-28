@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rifa Navideña - ¡Aparta tu número!</title>
     <style>
-        /* Estilos (omitiendo por brevedad, son los mismos) */
+        /* Estilos Base */
         body { 
             font-family: Arial, sans-serif; 
             background-color: #ff0000; 
@@ -15,19 +15,11 @@
             margin: 0;
             box-sizing: border-box;
         }
-        .header h1 { 
-            font-size: 2.5em; 
-            margin-bottom: 5px; 
-        }
-        .details p { 
-            font-size: 1.2em; 
-            margin: 5px 0; 
-        }
-        .grid-container { 
-            display: flex; 
-            justify-content: center; 
-            margin: 10px 0;
-        }
+        .header h1 { font-size: 2.5em; margin-bottom: 5px; }
+        .details p { font-size: 1.2em; margin: 5px 0; }
+        
+        /* Contenedor y Cuadrícula de Números */
+        .grid-container { display: flex; justify-content: center; margin: 10px 0; }
         .number-grid { 
             border-collapse: collapse; 
             width: 100%; 
@@ -48,6 +40,8 @@
         }
         .number-grid td:hover { background-color: #000000; }
         .number-grid td.selected { background-color: #f7d242; color: black; }
+        
+        /* Formulario y Botones */
         .form-container { 
             padding: 20px 10px; 
             background-color: rgba(0, 0, 0, 0.7);
@@ -64,9 +58,7 @@
             box-sizing: border-box; 
             font-size: 1em;
         }
-        .form-container input {
-            color: black;
-        }
+        .form-container input { color: black; }
         .form-container button { 
             background-color: #f7d242; 
             color: black; 
@@ -78,10 +70,7 @@
         .footer { margin-top: 20px; font-size: 1em; }
         
         @media (min-width: 600px) {
-            .number-grid td {
-                font-size: 1.1em;
-                padding: 10px 0;
-            }
+            .number-grid td { font-size: 1.1em; padding: 10px 0; }
         }
     </style>
 </head>
@@ -149,7 +138,7 @@
 
     <script>
         // --- 🟢 URL DE LA APLICACIÓN WEB DE GOOGLE APPS SCRIPT (URL ACTIVA) 🟢 ---
-        // ESTA URL DEBE COINCIDIR EXACTAMENTE CON LA DE TU ÚLTIMO DESPLIEGUE (Versión 4)
+        // ESTA ES LA URL DE TU ÚLTIMO DESPLIEGUE. SI DESPLIEGAS UNA NUEVA VERSIÓN DEL CODE.GS, DEBES ACTUALIZAR ESTA LÍNEA.
         const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzN1HCLSvaKRr9Kg_IclrJLa3Vhzg_F-gxHRFmMBQ1JVrmNoXKUCiP3ABsqGr87m8D03Q/exec"; 
         // -----------------------------------------------------------------------------
         const MAX_NUMBERS = 5; 
@@ -163,7 +152,6 @@
         
         let selectedNumbers = [];
 
-        // Función para codificar los datos como una cadena URL (Compatibilidad Apps Script)
         const encodeFormData = (name, number) => {
             return `Nombre=${encodeURIComponent(name)}&Número=${encodeURIComponent(number)}`;
         };
@@ -227,7 +215,6 @@
                         body: encodeFormData(name, num)
                     });
                     
-                    // Asegurar que la respuesta es JSON antes de parsearla
                     const result = await response.json(); 
                     
                     if (result.success) {
@@ -236,7 +223,7 @@
                         failedNumbers.push(num);
                     }
                 } catch (error) {
-                    // Si falla aquí, significa que la URL es incorrecta o hay un bloqueo de CORS/red.
+                    // Este error indica un problema con la URL o la red.
                     statusMessage.style.color = 'red';
                     statusMessage.textContent = `Error de conexión. Por favor, intenta de nuevo o contacta al administrador.`; 
                     submitButton.disabled = false;
@@ -290,3 +277,4 @@
     </script>
 </body>
 </html>
+
